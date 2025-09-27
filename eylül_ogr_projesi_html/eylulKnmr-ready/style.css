@@ -1,0 +1,16 @@
+@keyframes slide {
+    0%{
+        width: 0;
+    }
+    100% {
+        width: 20%;
+    }
+}
+
+.animated-line {
+    display: block;
+    height: 4px;
+    background-color: white;
+    width: 0;
+    animation: slide 2s ease-in-out;
+}
