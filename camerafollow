@@ -1,0 +1,23 @@
+using UnityEngine;
+
+public class CameraFollow : MonoBehaviour
+{
+    [Header("Takip Ayarları")]
+    public Transform target;                            // Takip edilecek hedef (karakter)
+    public Vector3 offset = new Vector3(0f, 3f, -6f);   // Hedefe göre konum farkı
+    public float followLerp = 10f;                      // Takip yumuşaklığı (pozisyon)
+    public float rotateLerp = 12f;                      // Dönüş yumuşaklığı (bakış)
+
+    void LateUpdate()
+    {
+        if (!target) return;
+
+        // Hedefin LOCAL uzayına göre offset ver (karakter nereye dönerse kamera arkasında kalsın)
+        Vector3 desiredPos = target.TransformPoint(offset);
+        transform.position = Vector3.Lerp(transform.position, desiredPos, followLerp * Time.deltaTime);
+
+        // Kamerayı hedefe döndür (yumuşak)
+        Quaternion desiredRot = Quaternion.LookRotation(target.position - transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRot, rotateLerp * Time.deltaTime);
+    }
+}
