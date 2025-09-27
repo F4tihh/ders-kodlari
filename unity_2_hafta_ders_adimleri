@@ -1,0 +1,86 @@
+🎬 Unity 3D – Karakter + Animasyon + Kamera Takip (Özet)
+1. Karakteri İndirme ve İçe Aktarma
+
+Mixamo’dan karakter (FBX) indir → FBX for Unity, T-Pose seç.
+
+İndirdiğin .fbx dosyasını Assets/Characters klasörüne sürükle bırak.
+
+Inspector → Rig → Animation Type = Humanoid → Apply.
+
+2. Animasyonları Alma
+
+Mixamo’dan Idle, Walk, Attack (veya paket) indir.
+
+Bunları Assets/Animations klasörüne at.
+
+Her animasyona tıkla:
+
+Rig → Humanoid → Apply
+
+Animation sekmesi → Idle/Walk için Loop Time ✓.
+
+3. Animator Controller Kurma
+
+Assets → Create → Animator Controller → HeroAnimator adını ver.
+
+Karakterini seç → Inspector → Animator → Controller alanına HeroAnimator’u sürükle.
+
+HeroAnimator’a çift tıkla → Animator penceresini aç.
+
+Animator içi:
+
+Idle, Walk, Attack kliplerini sürükle bırak.
+
+Idle → Set as Layer Default State.
+
+Parameters:
+
+Bool → isWalking
+
+Trigger → Attack
+
+Transitions:
+
+Idle → Walk (isWalking == true, Has Exit Time kapalı)
+
+Walk → Idle (isWalking == false, Has Exit Time kapalı)
+
+Any State → Attack (Attack Trigger, Has Exit Time açık).
+
+4. PlayerController Scripti
+
+Assets → Create → C# Script → PlayerController
+
+Karaktere ekle.
+
+Kod: WASD → yürüme (Idle ↔ Walk), Space → Attack.
+
+5. Kamera Takip Scripti
+
+Assets → Create → C# Script → CameraFollow
+
+Main Camera’ya ekle.
+
+Target = karakter
+
+Offset (0, 3, -6)
+
+Kamera arkadan yumuşak şekilde takip eder.
+
+6. Oyun Testi
+
+Play →
+
+W/A/S/D: karakter yürür, Idle↔Walk çalışır.
+
+Space: Attack animasyonu oynar, sonra Idle’a döner.
+
+Kamera arkadan karakteri takip eder.
+
+✅ Son Durum
+
+Karakter + Idle/Walk/Attack animasyonları hazır.
+
+Kamera arkadan takip ediyor.
+
+Basit bir 3D oyun için temel hareket + saldırı sistemi tamamlandı.
