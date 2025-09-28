@@ -1,0 +1,15 @@
+import random 
+
+hedef=random.randint(1,12)
+
+tahmin=0
+
+while tahmin!=hedef :
+    tahmin=int(input("tahmin gir"))
+    
+    if tahmin>hedef :
+        print("tahmin büyük ")
+    elif tahmin<hedef:
+        print("tahmin küçük")
+        
+print("doğru :")            
