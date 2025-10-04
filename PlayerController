@@ -1,0 +1,37 @@
+using UnityEngine;
+
+[RequireComponent(typeof(Animator))]
+public class PlayerController : MonoBehaviour
+{
+    [Header("Hareket")]
+    public float moveSpeed = 4f;
+
+    private Animator anim;
+
+    void Awake()
+    {
+        anim = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        // Giriş (WASD/Ok)
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+        Vector3 dir = new Vector3(h, 0, v).normalized;
+
+        bool walking = dir.sqrMagnitude > 0.01f;
+        anim.SetBool("isWalking", walking);
+
+        if (walking)
+        {
+            // Yöne dön + basit konum güncelle
+            transform.forward = dir;
+            transform.position += dir * moveSpeed * Time.deltaTime;
+        }
+
+        // Saldırı
+        if (Input.GetKeyDown(KeyCode.Space))
+            anim.SetTrigger("Attack");
+    }
+}
