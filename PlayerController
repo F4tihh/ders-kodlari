@@ -1,17 +1,15 @@
 using UnityEngine;
-using TMPro; // Score için
+using TMPro;
 
-[RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
-    [Header("Hareket")]
     public float moveSpeed = 4f;
 
     [Header("UI")]
     public TextMeshProUGUI scoreText;
+    private int score = 0;
 
     private Animator anim;
-    private int score = 0;
 
     void Awake()
     {
@@ -20,44 +18,38 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        // Sahne başında UI'ı güncelle
+        // Başlangıçta yazıyı güncelle
         if (scoreText) scoreText.text = "Score: " + score;
     }
 
     void Update()
     {
-        // --- YÜRÜME ---
-        // WASD / ok tuşları
+        // Basit yürüyüş (örnek)
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         Vector3 dir = new Vector3(h, 0f, v).normalized;
 
         bool walking = dir.sqrMagnitude > 0.01f;
-        anim.SetBool("isWalking", walking);
+        if (anim) anim.SetBool("isWalking", walking);
 
         if (walking)
         {
-            // Karakteri yöne döndür ve ilerlet
             transform.forward = dir;
             transform.position += dir * moveSpeed * Time.deltaTime;
         }
-
-        // --- SALDIRI ---
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            anim.SetTrigger("Attack"); // Animator'da Trigger parametresi "Attack" olmalı
-        }
     }
 
-    // --- COIN TOPLAMA ---
+    // ←← BURASI EN ÖNEMLİ KISIM
     void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Trigger'a girildi: " + other.name + " / Tag: " + other.tag);  // Konsolda görmek için
+
         if (other.CompareTag("Coin"))
         {
-            Destroy(other.gameObject); // Coin'i yok et
+            Destroy(other.gameObject);
             score++;
             if (scoreText) scoreText.text = "Score: " + score;
-            Debug.Log("Coin toplandı! Toplam: " + score);
+            Debug.Log("Coin toplandı! Yeni skor: " + score);
         }
     }
 }
