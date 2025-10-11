@@ -1,0 +1,15 @@
+using UnityEngine;
+
+public class DamageOnTouch : MonoBehaviour
+{
+    public int damage = 10;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        var hp = other.GetComponent<PlayerHealth>();
+        if (hp != null)
+        {
+            hp.TakeDamage(damage);
+        }
+    }
+}
