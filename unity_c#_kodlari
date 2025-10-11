@@ -1,5 +1,4 @@
- // link :  https://www.mixamo.com/#/?genres=&page=1&query=%E2%80%9CSword%E2%80%9D%2C+%E2%80%9CAttack%E2%80%9D%2C+%E2%80%9CWalk%E2%80%9D%2C+%E2%80%9CIdle%E2%80%9D&type=Motion%2CMotionPack
-// https://we.tl/t-JwUNev65go
+ // https://we.tl/t-MhMuKj2YQv
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
