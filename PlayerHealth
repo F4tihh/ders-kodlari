@@ -1,0 +1,31 @@
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PlayerHealth : MonoBehaviour
+{
+    public int maxHealth = 100;
+    public int currentHealth;
+    public Slider healthBar;
+
+    void Start()
+    {
+        currentHealth = maxHealth;
+        if (healthBar)
+        {
+            healthBar.maxValue = maxHealth;
+            healthBar.value = currentHealth;
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentHealth = Mathf.Max(0, currentHealth - damage);
+        if (healthBar) healthBar.value = currentHealth;
+
+        if (currentHealth <= 0)
+        {
+            Debug.Log("Game Over!");
+            gameObject.SetActive(false);
+        }
+    }
+}
