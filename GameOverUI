@@ -1,0 +1,28 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class GameOverUI : MonoBehaviour
+{
+    [Header("Refs")]
+    public GameObject panel;        // GameOverPanel (deaktif başlayacak)
+    public Button restartButton;    // RestartBtn
+
+    void Awake()
+    {
+        if (panel) panel.SetActive(false);                   // oyunun başında görünmesin
+        if (restartButton) restartButton.onClick.AddListener(Restart);
+    }
+
+    public void Show()
+    {
+        if (panel) panel.SetActive(true);                    // paneli aç
+        Time.timeScale = 0f;                                 // oyunu durdur
+    }
+
+    public void Restart()
+    {
+        Time.timeScale = 1f;                                 // zamanı normale getir
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+}
