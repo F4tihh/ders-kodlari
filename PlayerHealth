@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
+    [Header("Health Settings")]
     public int maxHealth = 100;
     public int currentHealth;
     public Slider healthBar;
@@ -10,6 +11,8 @@ public class PlayerHealth : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+
+        // Başlangıçta sağlık barını ayarla
         if (healthBar)
         {
             healthBar.maxValue = maxHealth;
@@ -17,15 +20,36 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    // Hasar alma fonksiyonu (Enemy tarafından çağrılır)
     public void TakeDamage(int damage)
     {
         currentHealth = Mathf.Max(0, currentHealth - damage);
-        if (healthBar) healthBar.value = currentHealth;
 
+        if (healthBar)
+            healthBar.value = currentHealth;
+
+        // Eğer can sıfırlandıysa Game Over ekranını aç
         if (currentHealth <= 0)
         {
-            Debug.Log("Game Over!");
-            gameObject.SetActive(false);
+            OnPlayerDead();   // <-- burası GameOver panelini çağırır
         }
+    }
+
+    // Oyuncu öldüğünde çağrılacak fonksiyon
+    void OnPlayerDead()
+    {
+        Debug.Log("Oyuncu öldü - Game Over Panel açılıyor...");
+
+        // Canvas'taki GameOverUI script'ini bul
+        var ui = FindObjectOfType<GameOverUI>();
+
+        // Eğer bulduysa Show() fonksiyonunu çağır
+        if (ui)
+        {
+            ui.Show();
+        }
+
+        // Oyuncuyu gizlemek istersen aşağıdaki satırı açabilirsin:
+        // gameObject.SetActive(false);
     }
 }
