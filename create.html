@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>QR Oluştur</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        input, textarea { width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box; }
+        button { padding: 10px 20px; margin-top: 20px; cursor: pointer; }
+        hr { margin-top: 30px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<h2>Çiçeğe Özel QR Oluştur 🌹</h2>
+
+<form method="POST">
+    <label>YouTube / Instagram Video Linki:</label>
+    <input type="text" name="video_url" required placeholder="https://...">
+
+    <label>Mesaj (Opsiyonel):</label>
+    <textarea name="message" placeholder="Seni çok seviyorum..."></textarea>
+
+    <button type="submit">QR ÜRET</button>
+</form>
+
+{% if token %}
+<hr>
+<h3>QR Kod Hazır 🎉</h3>
+<p>Bu QR’yi çiçeğe yapıştır:</p>
+
+<img src="/{{ qr_path }}" width="250" alt="QR Kod"><br><br>
+
+<p><b>URL:</b> {{ qr_data }}</p>
+{% endif %}
+
+</body>
+</html>
