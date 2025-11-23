@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Mesajın Var 💖</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #ffe6f2;
+            padding: 40px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            max-width: 400px;
+            margin: auto;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        iframe, video {
+            width: 100%;
+            border-radius: 10px;
+            border: none;
+        }
+        p { font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>🌹 Senin için bir mesaj var</h2>
+
+    <!-- Buraya gömülü video geliyor -->
+    <iframe src="{{ video_url }}" height="250" allowfullscreen></iframe>
+
+    <p>{{ message }}</p>
+</div>
+
+</body>
+</html>
