@@ -1,0 +1,179 @@
+import pygame
+import random
+import sys
+
+# -----------------------------
+# 1. Pygame Başlatma
+# -----------------------------
+pygame.init()
+
+GENISLIK = 800
+YUKSEKLIK = 600
+ekran = pygame.display.set_mode((GENISLIK, YUKSEKLIK))
+pygame.display.set_caption("Düşman Gemisi Vurma Oyunu")
+
+saat = pygame.time.Clock()
+
+# -----------------------------
+# 2. Resimleri Yükleme
+# -----------------------------
+arka_plan = pygame.image.load("arka_plan.png").convert()
+arka_plan = pygame.transform.scale(arka_plan, (GENISLIK, YUKSEKLIK))
+
+bizim_gemi_resim = pygame.image.load("bizim_gemi.png").convert_alpha()
+dusman_gemi_resim = pygame.image.load("dusman_gemi.png").convert_alpha()
+mermi_resim = pygame.image.load("mermi.png").convert_alpha()
+
+# Gemileri biraz boyutlandır (gerekirse)
+bizim_gemi_resim = pygame.transform.scale(bizim_gemi_resim, (64, 64))
+dusman_gemi_resim = pygame.transform.scale(dusman_gemi_resim, (48, 48))
+mermi_resim = pygame.transform.scale(mermi_resim, (8, 24))
+
+# -----------------------------
+# 3. Oyun Değişkenleri
+# -----------------------------
+# Bizim gemi başlangıç pozisyonu
+bizim_x = GENISLIK // 2 - 32
+bizim_y = YUKSEKLIK - 80
+bizim_hiz = 7
+
+# Mermiler için liste
+mermiler = []  # her eleman: [x, y]
+
+mermi_hiz = -10
+
+# Düşmanlar
+dusman_sayisi = 5
+dusmanlar = []  # her eleman: [x, y, hiz_y]
+
+for _ in range(dusman_sayisi):
+    x = random.randint(0, GENISLIK - 48)
+    y = random.randint(-150, -50)
+    hiz_y = random.randint(2, 5)
+    dusmanlar.append([x, y, hiz_y])
+
+puan = 0
+yazi_font = pygame.font.SysFont("Arial", 24, True)
+
+oyun_bitti = False
+
+# -----------------------------
+# 4. Yardımcı Fonksiyonlar
+# -----------------------------
+def ciz_yazi(yazi, x, y, renk=(255, 255, 255)):
+    metin = yazi_font.render(yazi, True, renk)
+    ekran.blit(metin, (x, y))
+
+def carpisti_mi(rect1, rect2):
+    return rect1.colliderect(rect2)
+
+# -----------------------------
+# 5. Ana Oyun Döngüsü
+# -----------------------------
+while True:
+    saat.tick(60)  # 60 FPS
+
+    # Olaylar
+    for etkinlik in pygame.event.get():
+        if etkinlik.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    tuslar = pygame.key.get_pressed()
+
+    if not oyun_bitti:
+        # -------------------------
+        # Bizim gemi hareketi
+        # -------------------------
+        if tuslar[pygame.K_LEFT]:
+            bizim_x -= bizim_hiz
+        if tuslar[pygame.K_RIGHT]:
+            bizim_x += bizim_hiz
+
+        # Ekran dışına çıkmasın
+        if bizim_x < 0:
+            bizim_x = 0
+        if bizim_x > GENISLIK - 64:
+            bizim_x = GENISLIK - 64
+
+        # -------------------------
+        # Mermi ateşleme (SPACE)
+        # -------------------------
+        if tuslar[pygame.K_SPACE]:
+            # Mermi sayısını çok abartmamak için:
+            if len(mermiler) == 0:  # aynı anda 1 mermi
+                mermi_x = bizim_x + 64 // 2 - 4
+                mermi_y = bizim_y
+                mermiler.append([mermi_x, mermi_y])
+
+        # -------------------------
+        # Mermileri hareket ettir
+        # -------------------------
+        yeni_mermiler = []
+        for mermi in mermiler:
+            mermi[1] += mermi_hiz  # yukarı doğru
+            if mermi[1] > -30:
+                yeni_mermiler.append(mermi)
+        mermiler = yeni_mermiler
+
+        # -------------------------
+        # Düşmanları hareket ettir
+        # -------------------------
+        for dusman in dusmanlar:
+            dusman[1] += dusman[2]  # y'yi hiz kadar artır
+
+            # Ekranın altına geçtiyse yukarıdan tekrar gelsin
+            if dusman[1] > YUKSEKLIK:
+                dusman[0] = random.randint(0, GENISLIK - 48)
+                dusman[1] = random.randint(-200, -50)
+                dusman[2] = random.randint(2, 5)
+
+        # -------------------------
+        # Çarpışma Kontrolü (Mermi - Düşman)
+        # -------------------------
+        for mermi in mermiler:
+            mermi_rect = pygame.Rect(mermi[0], mermi[1], 8, 24)
+            for dusman in dusmanlar:
+                dusman_rect = pygame.Rect(dusman[0], dusman[1], 48, 48)
+                if carpisti_mi(mermi_rect, dusman_rect):
+                    puan += 1
+                    # Düşmanı yeniden doğur
+                    dusman[0] = random.randint(0, GENISLIK - 48)
+                    dusman[1] = random.randint(-200, -50)
+                    dusman[2] = random.randint(2, 5)
+                    # Mermiyi ekrandan çıkar
+                    mermi[1] = -100
+
+        # -------------------------
+        # Çarpışma Kontrolü (Bizim Gemi - Düşman)
+        # -------------------------
+        bizim_rect = pygame.Rect(bizim_x, bizim_y, 64, 64)
+        for dusman in dusmanlar:
+            dusman_rect = pygame.Rect(dusman[0], dusman[1], 48, 48)
+            if carpisti_mi(bizim_rect, dusman_rect):
+                oyun_bitti = True
+
+    # -------------------------
+    # ÇİZİM KISMI
+    # -------------------------
+    ekran.blit(arka_plan, (0, 0))
+
+    # Bizim gemi
+    ekran.blit(bizim_gemi_resim, (bizim_x, bizim_y))
+
+    # Düşmanlar
+    for dusman in dusmanlar:
+        ekran.blit(dusman_gemi_resim, (dusman[0], dusman[1]))
+
+    # Mermiler
+    for mermi in mermiler:
+        ekran.blit(mermi_resim, (mermi[0], mermi[1]))
+
+    # Puan
+    ciz_yazi(f"Puan: {puan}", 10, 10)
+
+    if oyun_bitti:
+        ciz_yazi("OYUN BİTTİ!", GENISLIK//2 - 80, YUKSEKLIK//2 - 20, (255, 50, 50))
+        ciz_yazi("Çıkmak için pencereyi kapatın", GENISLIK//2 - 180, YUKSEKLIK//2 + 20)
+
+    pygame.display.flip()
