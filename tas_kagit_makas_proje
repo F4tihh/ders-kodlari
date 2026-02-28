@@ -1,0 +1,122 @@
+import tkinter as tk
+import random
+
+# ------------------------------
+# 1. PENCERE OLUŞTURMA
+# ------------------------------
+pencere = tk.Tk()
+pencere.title("Taş Kağıt Makas Oyunu")
+pencere.geometry("600x400")  # genişlik x yükseklik
+
+# ------------------------------
+# 2. RESİMLERİ YÜKLEME
+# ------------------------------
+# Bu resimler .py dosyası ile aynı klasörde olmalı
+tas_resim = tk.PhotoImage(file="tas.png")
+kagit_resim = tk.PhotoImage(file="kagit.png")
+makas_resim = tk.PhotoImage(file="makas.png")
+
+# Seçenekleri ve resimleri eşleştirelim
+resimler = {
+    "tas": tas_resim,
+    "kagit": kagit_resim,
+    "makas": makas_resim
+}
+
+secenekler = ["tas", "kagit", "makas"]
+
+# ------------------------------
+# 3. ÜST KISIM: BAŞLIK VE BİLGİ
+# ------------------------------
+baslik_label = tk.Label(pencere, text="Taş - Kağıt - Makas", font=("Arial", 20, "bold"))
+baslik_label.pack(pady=10)
+
+bilgi_label = tk.Label(
+    pencere,
+    text="Bir seçim yap: Taş, Kağıt veya Makas",
+    font=("Arial", 12)
+)
+bilgi_label.pack()
+
+# ------------------------------
+# 4. ORTA KISIM: OYUNCU & BİLGİSAYAR RESİMLERİ
+# ------------------------------
+orta_frame = tk.Frame(pencere)
+orta_frame.pack(pady=10)
+ 
+# ****** skor tablosu eklenecek 
+#  
+oyuncu_frame = tk.Frame(orta_frame)
+oyuncu_frame.pack(side="left", padx=20)
+
+bilgisayar_frame = tk.Frame(orta_frame)
+bilgisayar_frame.pack(side="right", padx=20)
+
+oyuncu_label_baslik = tk.Label(oyuncu_frame, text="Sen", font=("Arial", 14, "bold"))
+oyuncu_label_baslik.pack()
+
+oyuncu_resim_label = tk.Label(oyuncu_frame, image=None)
+oyuncu_resim_label.pack(pady=5)
+
+bilgisayar_label_baslik = tk.Label(bilgisayar_frame, text="Bilgisayar", font=("Arial", 14, "bold"))
+bilgisayar_label_baslik.pack()
+
+bilgisayar_resim_label = tk.Label(bilgisayar_frame, image=None)
+bilgisayar_resim_label.pack(pady=5)
+
+# ------------------------------
+# 5. SONUÇ YAZISI
+# ------------------------------
+sonuc_label = tk.Label(pencere, text="", font=("Arial", 16, "bold"))
+sonuc_label.pack(pady=10)
+
+# ------------------------------
+# 6. OYUN MANTIĞI
+# ------------------------------
+def kazanan_bul(oyuncu, bilgisayar):
+    if oyuncu == bilgisayar:
+        return "Berabere 🤝"
+
+    if (
+        (oyuncu == "tas" and bilgisayar == "makas") or
+        (oyuncu == "makas" and bilgisayar == "kagit") or
+        (oyuncu == "kagit" and bilgisayar == "tas")
+    ):
+        return "Kazandın 🎉"
+    else:
+        return "Kaybettin 😢"
+    
+
+#  skor 5 olan kazanır ekle , sonra oyun kapansın !!! 
+
+def oynat(oyuncu_secimi):
+    # Oyuncu resmini güncelle
+    oyuncu_resim_label.config(image=resimler[oyuncu_secimi])
+
+    # Bilgisayar rastgele seçim yapsın
+    bilgisayar_secimi = random.choice(secenekler)
+    bilgisayar_resim_label.config(image=resimler[bilgisayar_secimi])
+
+    # Sonucu bul
+    sonuc_metni = kazanan_bul(oyuncu_secimi, bilgisayar_secimi)
+    sonuc_label.config(text=f"Sen: {oyuncu_secimi}  |  Bilgisayar: {bilgisayar_secimi}\n{sonuc_metni}")
+
+# ------------------------------
+# 7. ALT KISIM: BUTONLAR
+# ------------------------------
+buton_frame = tk.Frame(pencere)
+buton_frame.pack(pady=15)
+
+tas_buton = tk.Button(buton_frame, text="Taş", width=10, command=lambda: oynat("tas"))
+tas_buton.grid(row=0, column=0, padx=5)
+
+kagit_buton = tk.Button(buton_frame, text="Kağıt", width=10, command=lambda: oynat("kagit"))
+kagit_buton.grid(row=0, column=1, padx=5)
+
+makas_buton = tk.Button(buton_frame, text="Makas", width=10, command=lambda: oynat("makas"))
+makas_buton.grid(row=0, column=2, padx=5)
+
+# ------------------------------
+# 8. PENCEREYİ ÇALIŞTIR
+# ------------------------------
+pencere.mainloop()
